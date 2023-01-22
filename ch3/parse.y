@@ -1,19 +1,33 @@
 %{
 #include <stdio.h>
 
+double vbltable[26];
+
 extern int yylex(void);
 extern int yyerror(char *);
 %}
 
-%token NAME NUMBER
+%union {
+  double dval;
+  int vblno;
+}
+
+%token <vblno> NAME
+%token <dval> NUMBER
 %left '-' '+'
 %left '*' '/'
 %nonassoc UMINUS
 
+%type <dval> expression
+
 %%
 
-statement: NAME '=' expression
-         | expression          { printf("= %d\n", $1); }
+statement_list: statement '\n'
+              | statement_list statement '\n'
+              ;
+
+statement: NAME '=' expression { vbltable[$1] = $3; }
+         | expression          { printf("= %g\n", $1); }
          ;
 
 expression : expression '+' expression { $$ = $1 + $3; }
@@ -29,6 +43,7 @@ expression : expression '+' expression { $$ = $1 + $3; }
            | '-' expression %prec UMINUS { $$ = -$2; }
            | '(' expression ')'    { $$ = $2; }
            | NUMBER            { $$ = $1; }
+           | NAME              { $$ = vbltable[$1]; }
            ;
 %%
 
