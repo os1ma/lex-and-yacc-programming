@@ -28,3 +28,9 @@ struct symtab *symlook(char *s)
   yyerror("Too many symbols");
   exit(1);
 }
+
+void addfunc(char *name, double (*func)())
+{
+  struct symtab *sp = symlook(name);
+  sp->funcptr = func;
+}

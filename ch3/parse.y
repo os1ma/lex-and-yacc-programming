@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "symtab.h"
 
 extern int yylex(void);
@@ -44,10 +45,22 @@ expression : expression '+' expression { $$ = $1 + $3; }
            | '(' expression ')'    { $$ = $2; }
            | NUMBER            { $$ = $1; }
            | NAME              { $$ = $1->value; }
+           | NAME '(' expression ')' {
+              if ($1->funcptr) {
+                $$ = ($1->funcptr)($3);
+              } else {
+                printf("%s not a function\n", $1->name);
+                $$ = 0.0;
+              }
+           }
            ;
 %%
 
 int main(void) {
+  addfunc("sqrt", sqrt);
+  addfunc("exp", exp);
+  addfunc("log", log);
+
   yyparse();
   return 0;
 }
