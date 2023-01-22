@@ -1,13 +1,13 @@
 %{
 #include "parse.tab.h"
 #include <math.h>
-extern double vbltable[26];
+#include "symtab.h"
 %}
 
 %%
 [0-9]+ { yylval.dval = atof(yytext); return NUMBER; }
 [ \t]  ;
-[a-z]  { yylval.vblno = yytext[0] - 'a'; return NAME; }
+[a-z]+ { yylval.symp = symlook(yytext); return NAME; }
 "$"    { return 0; }
 \n     |
 .      return yytext[0];

@@ -4,6 +4,7 @@ CFLAGS = -Wall -W -O2
 
 TARGET = main
 
+SRC = symtab.c
 LEX_SRC = lex.l
 YACC_SRC = parse.y
 
@@ -11,7 +12,7 @@ LEX_C = $(LEX_SRC:.l=.yy.c)
 YACC_C = $(YACC_SRC:.y=.tab.c)
 YACC_H = $(YACC_SRC:.y=.tab.h)
 
-$(TARGET): $(LEX_C) $(YACC_C)
+$(TARGET): $(SRC) $(LEX_C) $(YACC_C)
 	$(CC) $(CFLAGS) -o $@ $^ -lfl -ly
 
 $(LEX_C): $(LEX_SRC) $(YACC_H)
